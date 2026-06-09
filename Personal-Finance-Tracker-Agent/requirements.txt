@@ -1,0 +1,9 @@
+langchain
+langchain-openai
+langchain-groq
+langgraph
+fastapi
+pydantic-settings
+uvicorn
+tenacity
+pytest

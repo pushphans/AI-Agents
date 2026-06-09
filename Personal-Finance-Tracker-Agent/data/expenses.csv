@@ -1,0 +1,4 @@
+id,date,expense_type,amount,item
+1,2026-06-07,Clothing,1000.00,Clothing Purchase
+2,2026-06-06,Food,500.00,Food expense
+3,2026-06-08,Fuel,500.00,Petrol
