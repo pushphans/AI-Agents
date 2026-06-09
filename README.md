@@ -1,65 +1,102 @@
 # AI-Agents
 
-यह रिपोजिटरी एक मोनो-रेपो (monorepo) है जिसमें अलग-अलग agentic AI प्रोजेक्ट्स को एक ही स्थान पर व्यवस्थित किया गया है। प्रत्येक प्रोजेक्ट अपनी डायरेक्टरी में रखा जाएगा ताकि विकास, टेस्टिंग और डिप्लॉयमेंट आसान रहे।
+This repository is a monorepo that organizes multiple agentic AI projects in a single location. Each project is maintained in its own directory to make development, testing, and deployment easier and more manageable.
 
-## क्या है
-- उद्देश्य: अलग-अलग agent-based / agentic AI प्रोजेक्ट्स, प्रोटोटाइप्स और रिसर्च-प्रोजेक्ट्स को एक ही स्थान पर रखना।
-- भाषा: इस रिपोजिटरी में मुख्यतः Python का उपयोग किया गया है।
+## Overview
 
-## रिपोजिटरी संरचना (उदाहरण)
+* **Purpose:** To host various agent-based and agentic AI projects, prototypes, experiments, and research initiatives in one centralized repository.
+* **Language:** This repository primarily uses Python.
 
-```
+## Repository Structure (Example)
+
+```text
 AI-Agents/
-├── projects/               # प्रत्येक agentic प्रोजेक्ट की डायरेक्टरी
-│   ├── agent-chatbot/      # उदाहरण प्रोजेक्ट
+├── projects/               # Directory containing individual agentic projects
+│   ├── agent-chatbot/      # Example project
 │   │   ├── README.md
 │   │   ├── requirements.txt
 │   │   └── src/
 │   └── agent-scheduler/
-├── tools/                  # सहायक स्क्रिप्ट और डेवलपमेंट टूल
-├── docs/                   # साझा दस्तावेज़ और आर्किटेक्चर डायग्राम
-└── README.md               # यह फाइल
+├── tools/                  # Utility scripts and development tools
+├── docs/                   # Shared documentation and architecture diagrams
+└── README.md               # This file
 ```
 
-## हर प्रोजेक्ट के लिए सुझाव (टेम्पलेट)
-- projects/<project-name>/README.md — प्रोजेक्ट का उद्देश्य, रन कैसे करें, डिपेंडेंसीज़
-- projects/<project-name>/requirements.txt — Python डिपेंडेंसीज़
-- projects/<project-name>/src/ — मुख्य कोड
-- projects/<project-name>/tests/ — यूनिट/इंटीग्रेशन टेस्ट
+## Recommended Project Structure
 
-## कैसे शुरू करें (General)
-1. रिपोजिटरी क्लोन करें:
-   ```bash
-   git clone https://github.com/pushphans/AI-Agents.git
-   cd AI-Agents
-   ```
-2. किसी प्रोजेक्ट डायरेक्टरी में जाएँ और वर्चुअल एनवायरनमेंट बनाएँ:
-   ```bash
-   cd projects/agent-chatbot
-   python -m venv .venv
-   source .venv/bin/activate   # macOS/Linux
-   .\.venv\Scripts\activate  # Windows (PowerShell)
-   pip install -r requirements.txt
-   ```
-3. प्रोजेक्ट के README में दिए गए रन-इन्स्ट्रक्शंस का पालन करें।
+For each project, it is recommended to follow the structure below:
 
-## योगदान कैसे करें
-- नए प्रोजेक्ट जोड़ने हेतु: `projects/` डायरेक्टरी में एक नई फ़ोल्डर बनाएँ और ऊपर दिए टेम्पलेट का पालन करें।
-- कोड श्वेत नियम (style): PEP8/black/isort का पालन करें।
-- Pull Request बनाते समय:
-  - छोटा, स्पष्ट PR बनायें।
-  - PR में बदलाव का उद्देश्य और कैसे टेस्ट किये गए, बतायें।
+* `projects/<project-name>/README.md` — Project overview, setup instructions, and usage guide
+* `projects/<project-name>/requirements.txt` — Python dependencies
+* `projects/<project-name>/src/` — Main source code
+* `projects/<project-name>/tests/` — Unit and integration tests
 
-## मुद्दे और फीचर रिक्वेस्ट
-- बग्स और फीचर रिक्वेस्ट के लिए GitHub Issues का उपयोग करें।
-- किसी प्रोजेक्ट-विशिष्ट समस्या के लिए उस प्रोजेक्ट का नाम बतायें और पुनरुत्पादन स्टेप्स दें।
+## Getting Started
 
-## लाइसेंस
-- कृपया LICENSE फ़ाइल देखें (यदि उपलब्ध)।
+### 1. Clone the Repository
 
-## संपर्क
-- Maintainer: @pushphans
+```bash
+git clone https://github.com/pushphans/AI-Agents.git
+cd AI-Agents
+```
 
----
+### 2. Navigate to a Project and Create a Virtual Environment
 
-अगर आप चाहें तो मैं यह README और भी विस्तार से (अंग्रेज़ी/हिंदी में) या किसी खास प्रोजेक्ट के लिए कस्टम README भी बना दूँ।
+```bash
+cd projects/agent-chatbot
+
+python -m venv .venv
+
+# macOS/Linux
+source .venv/bin/activate
+
+# Windows (PowerShell)
+.\.venv\Scripts\activate
+
+pip install -r requirements.txt
+```
+
+### 3. Follow the Project-Specific Instructions
+
+Refer to the project's README file for detailed setup and execution instructions.
+
+## Contributing
+
+### Adding a New Project
+
+1. Create a new folder inside the `projects/` directory.
+2. Follow the recommended project structure outlined above.
+3. Include clear documentation and dependency information.
+
+### Code Style
+
+Please follow:
+
+* PEP 8
+* Black
+* isort
+
+### Pull Requests
+
+When submitting a Pull Request:
+
+* Keep changes focused and concise.
+* Provide a clear description of the purpose of the changes.
+* Explain how the changes were tested.
+
+## Issues and Feature Requests
+
+* Use GitHub Issues to report bugs or request new features.
+* For project-specific issues, include:
+
+  * The project name
+  * Steps to reproduce the issue
+  * Expected and actual behavior
+
+## License
+
+Please refer to the LICENSE file for licensing information (if available).
+
+## Contact
+
+* **Maintainer:** @pushphans
