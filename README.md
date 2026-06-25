@@ -97,6 +97,6 @@ When submitting a Pull Request:
 
 Please refer to the LICENSE file for licensing information (if available).
 
-## Contact
+## Contact me
 
 * **Maintainer:** @pushphans
