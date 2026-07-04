@@ -1,163 +1,186 @@
-# Project 2.2 — Customer Support Bot
+# Customer Support Bot
 
 **Pattern:** Routing (Pattern 2)
-**Stack:** LangGraph + FastAPI + DeepSeek (A2.1 wali conventions same)
-**Naya kya hai:** RAG as one route + confidence-based human escalation + priority routing
+**Stack:** LangGraph + DeepSeek + ChromaDB
+**RAG:** General support node pe ChromaDB se context retrieve karke answer
 
 ---
 
-## 1. Idea (ek line mein)
+## Idea
 
-Ek **router** customer ka message classify karta hai aur usse sahi **specialized handler** tak bhejta hai. General inquiries pe **RAG** knowledge base se answer laata hai; agar RAG confident na ho ya complaint ho to **human escalation** hota hai.
-
----
-
-## 2. Routes (5 handlers)
-
-| Route | Kab trigger hoga | Handler kya karega | Priority |
-|-------|------------------|--------------------|----------|
-| `BILLING` | Payment / invoice / refund issue | Billing handler node se reply | NORMAL |
-| `TECH` | Technical problem / bug / error | Tech support handler node se reply | NORMAL |
-| `FAQ` | General inquiry / "how do I..." | **RAG** — knowledge base se retrieve karke answer | LOW |
-| `COMPLAINT` | Shikayat / naaraazgi | Priority handler + **human escalation** | HIGH |
-| `FEEDBACK` | Suggestion / feedback | Storage handler — save kar do, koi LLM answer nahi | LOW |
+Ek **router** user ka message classify karta hai aur usse sahi **specialized handler** tak bhejta hai. General inquiries pe **RAG** (ChromaDB) se knowledge base retrieve karke answer laata hai. Complaint route dedicated complaint handler ko bhejta hai.
 
 ---
 
-## 3. Architecture
+## Routes (5 handlers)
+
+| Route | Kab trigger hoga | Handler kya karega |
+|-------|------------------|--------------------|
+| `BILLING_SUPPORT` | Payment / invoice / refund issue | Billing handler node se reply |
+| `TECH_SUPPORT` | Technical problem / bug / error | Tech support handler node se reply |
+| `GENERAL_SUPPORT` | General inquiry / "how do I..." | **RAG** — ChromaDB se relevant context la kar answer |
+| `COMPLAINT_SUPPORT` | Shikayat / naaraazgi | Complaint handler node se empathetic reply |
+| `FEEDBACK_SUPPORT` | Suggestion / feedback | Feedback handler node se acknowledgement |
+
+---
+
+## Architecture
 
 ### Folder structure
 
 ```
 A2.2-Customer Support Bot/
 ├── app/
-│   ├── main.py                  # FastAPI app + router include
-│   ├── api/
-│   │   └── agent_router.py      # POST /agent/ask-the-agent
-│   ├── agents/
-│   │   └── workflow.py          # LangGraph: router node + 5 handler nodes
+│   ├── main.py                    # FastAPI app entry point
 │   ├── core/
-│   │   ├── config.py            # settings: API key + embedding/vector config
-│   │   └── state.py             # AgentState TypedDict
+│   │   ├── config.py              # Settings: API keys + ChromaDB config
+│   │   └── state.py               # AgentState TypedDict
+│   ├── agent/
+│   │   └── agent_graph.py         # LangGraph: router + 5 handler nodes
+│   ├── models/
+│   │   └── models.py              # RequestModel / ResponseModel (pydantic)
 │   ├── rag/
-│   │   ├── ingest.py            # docs -> chunks -> embeddings -> vector store (one-time)
-│   │   └── retriever.py         # query -> relevant chunks + similarity score
-│   └── models/
-│       └── models.py            # RequestModel / ResponseModel (pydantic)
+│   │   ├── embeddings.py          # HuggingFace embedder (shared)
+│   │   ├── ingestion/
+│   │   │   ├── ingestion.py       # PDF -> chunks -> embeddings (core logic)
+│   │   │   └── run_ingestion.py   # One-time script: PDF -> ChromaDB
+│   │   ├── retrieval/
+│   │   │   └── retrieval.py       # query -> ChromaDB -> relevant chunks
+│   │   └── vector_db/
+│   │       └── vector_database.py # ChromaDB instance
+│   └── sample_data/
+│       └── test_data.pdf          # Sample PDF for RAG knowledge base
 ├── data/
-│   └── knowledge_base/          # FAQ docs (.md / .txt) — RAG source
+│   └── chroma_db/                 # ChromaDB persistent storage (auto-created)
 ├── requirements.txt
+├── pyproject.toml
+├── .env                           # API keys (git-ignored)
 └── README.md
 ```
 
 ### LangGraph flow
 
 ```
-                 ┌─────────────┐
-   START ───────►│   ROUTER    │  structured output: route + priority
-                 └──────┬──────┘
-        ┌───────┬───────┼───────────┬────────────┐
-        ▼       ▼       ▼           ▼            ▼
-     BILLING  TECH   FAQ_RAG    COMPLAINT     FEEDBACK
-      node    node   node │      node │        node
-        │       │         │          │           │
-        │       │   confidence?   escalate=True   │
-        │       │    ┌────┴────┐      │           │
-        │       │  high      low      │           │
-        │       │   │          │      │           │
-        │       │ answer   ESCALATE ◄─┘           │
-        └───────┴────┬─────────┴──────────────────┘
-                     ▼
-                    END
+START ──────► router_node (classifies query into one of 5 routes)
+              │
+              ├── BILLING_SUPPORT ──► billing_node ──► END
+              ├── TECH_SUPPORT ────► tech_node ──────► END
+              ├── GENERAL_SUPPORT ─► general_node ────► END (RAG enabled)
+              ├── COMPLAINT_SUPPORT ► complaint_node ──► END
+              └── FEEDBACK_SUPPORT ► feedback_node ───► END
+```
+
+**RAG flow (GENERAL_SUPPORT route):**
+```
+User query
+    │
+    ▼
+retrieve_data(query) ──► ChromaDB.asimilarity_search()
+    │                        │
+    │                        ▼
+    │                    top-k similar chunks
+    │                        │
+    ▼                        ▼
+System prompt + context ──► LLM ──► Answer
 ```
 
 ---
 
-## 4. State schema
+## State schema
 
-`app/core/state.py` — A2.1 ke `AgentState` ko extend karke:
+`app/core/state.py`
 
 ```python
 class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages]
-    route: Optional[Literal["BILLING", "TECH", "FAQ", "COMPLAINT", "FEEDBACK"]]
-    priority: Optional[Literal["LOW", "NORMAL", "HIGH"]]
-    rag_confidence: Optional[float]   # RAG similarity score (0-1)
-    escalated: bool                    # human handoff flag
+    route: Optional[str]
 ```
 
 ---
 
-## 5. Components — kya-kya banana hai
+## Components
 
-### 5.1 Router node
-- Structured output (pydantic schema) se `route` + `priority` dono nikaalo.
-- Complaint aaye to `priority = HIGH`.
-- A2.1 ke `router_node` jaisa hi, bas priority field extra.
+### Router node
+- LLM se structured output lekar user query ko 5 routes mein classify karta hai.
+- Complaint, billing, tech, feedback, general — har category ka alag handler.
 
-### 5.2 Handler nodes (5)
-- `billing_node`, `tech_node` — simple LLM + system prompt (A2.1 pattern).
-- `faq_node` — **RAG**: retriever call karo, docs + score lao, LLM ko context ke saath answer generate karne do, `rag_confidence` state mein set karo.
-- `complaint_node` — reply draft karo but `escalated = True` set karo.
-- `feedback_node` — answer generate mat karo, message ko store (file/DB) karke acknowledgement do.
+### Handler nodes (5)
+- `billing_node` — billing/payment/invoice related queries
+- `tech_node` — technical issues, bugs, setup
+- `general_node` — general queries. **RAG enabled**: ChromaDB se relevant context retrieve karke LLM ko deta hai.
+- `complaint_node` — complaints, escalations (empathetic response)
+- `feedback_node` — suggestions, feature requests
 
-### 5.3 RAG module (`app/rag/`)
-- **ingest.py** — `data/knowledge_base/` ke docs load -> chunk -> embed -> vector store (Chroma/FAISS). Ek baar chalta hai.
-- **retriever.py** — query embed -> top-k similar chunks + similarity score return.
+### RAG module (`app/rag/`)
+- **ingestion/ingestion.py** — PDF file read → text chunks → embeddings
+- **ingestion/run_ingestion.py** — One-time script: `test_data.pdf` se chunks banake ChromaDB mein store karta hai
+- **retrieval/retrieval.py** — User query se ChromaDB mein top-k similar chunks dhundhta hai
+- **vector_db/vector_database.py** — ChromaDB instance (persistent, file-based)
 
-### 5.4 Confidence gate (escalation)
-- FAQ node ke baad conditional edge:
-  - `rag_confidence >= THRESHOLD` -> answer -> END
-  - `rag_confidence < THRESHOLD` -> `ESCALATE` node -> END
-- Complaint route hamesha escalate.
-
-### 5.5 API layer
-- `POST /agent/ask-the-agent` (A2.1 jaisa).
-- `ResponseModel` mein extra fields: `route`, `priority`, `escalated`, `confidence`.
+### Vector DB: ChromaDB
+- **Qdrant se migrate** kiya hai ChromaDB pe
+- File-based persistent storage (`data/chroma_db/`)
+- Collection auto-create hota hai, koi manual check nahi chahiye
+- `HuggingFaceEmbeddings` (all-MiniLM-L6-v2) use ho raha hai
 
 ---
 
-## 6. Naye concepts (yeh project seekhne ke liye hai)
+## Setup
 
-1. **Smart routing with priorities** — router sirf route nahi, priority bhi decide karta hai.
-2. **RAG as one route** — poora bot RAG nahi; sirf FAQ path pe RAG.
-3. **Confidence-based decisions** — retrieval score dekhkar answer vs escalate.
-4. **Escalation patterns** — human handoff flag + priority.
+### 1. Install dependencies
 
-> A2.1 se difference: routing skeleton same hai. **Naya sirf RAG + confidence gate + escalation + priority hai.**
-
----
-
-## 7. Build order (suggested)
-
-1. `state.py` + `models.py` — schemas pehle.
-2. Router node + 5 empty handler nodes + graph wiring (A2.1 se port).
-3. FastAPI endpoint chalu karke basic routing test.
-4. `data/knowledge_base/` mein 5-10 FAQ docs daalo.
-5. `rag/ingest.py` + `rag/retriever.py` bana ke vector store ready.
-6. `faq_node` mein RAG plug karo.
-7. Confidence gate + `escalate_node` add karo.
-8. Complaint priority + feedback storage finish.
-
----
-
-## 8. Config / env
-
-`.env`:
+```bash
+pip install -r requirements.txt
 ```
-DEEPSEEK_API_KEY=your_key_here
+
+### 2. Configure `.env`
+
+`.env` file mein DeepSeek API key daalo:
+
+```env
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
 ```
-`config.py` mein add: embedding model naam, vector store path, `RAG_CONFIDENCE_THRESHOLD` (e.g. 0.7), `RAG_TOP_K` (e.g. 3).
+
+### 3. Ingest PDF into ChromaDB (one-time)
+
+Sample PDF (`app/sample_data/test_data.pdf`) se data ChromaDB mein load karne ke liye:
+
+```bash
+python -m app.rag.ingestion.run_ingestion
+```
+
+Yeh script ek baar chalana hai. ChromaDB mein data permanently store ho jayega (`data/chroma_db/`).
+
+Agar naya PDF daalna ho toh `run_ingestion.py` mein path change karo aur phir se chalao.
+
+### 4. Run the agent
+
+```bash
+python -m app.agent.agent_graph
+```
 
 ---
 
-## 9. Example requests (test ke liye)
+## How it works
 
-| Query | Expected route | Escalated? |
-|-------|----------------|-----------|
-| "My invoice shows double charge" | BILLING | No |
-| "App crashes on login" | TECH | No |
-| "What are your working hours?" | FAQ (RAG) | No (agar doc mila) |
-| "Your service is terrible, I want a refund now" | COMPLAINT | Yes (HIGH) |
-| "You should add dark mode" | FEEDBACK | No |
-| "Random unknown question not in docs" | FAQ (RAG) | Yes (low confidence) |
+1. User query aati hai → router classify karta hai
+2. Route ke hisaab se appropriate node chalta hai
+3. `GENERAL_SUPPORT` route pe:
+   - `retrieve_data()` ChromaDB se relevant chunks laata hai
+   - Context system prompt mein inject hota hai
+   - LLM context ke saath answer generate karta hai
+4. Agar relevant context na mile, LLM "I cannot answer this question" bolta hai
+
+---
+
+## Tech stack
+
+| Component | Technology |
+|-----------|-----------|
+| LLM | DeepSeek (deepseek-chat) |
+| Agent Framework | LangGraph |
+| Vector DB | ChromaDB (persistent) |
+| Embeddings | HuggingFace (all-MiniLM-L6-v2) |
+| PDF Processing | pypdf |
+| Text Splitting | RecursiveCharacterTextSplitter |
+| API | FastAPI (planned) |
