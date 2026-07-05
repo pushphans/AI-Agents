@@ -7,3 +7,4 @@ pydantic-settings
 uvicorn
 tenacity
 pytest
+langsmith

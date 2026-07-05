@@ -4,6 +4,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     OPENAI_API_KEY: str
 
+    LANGSMITH_TRACING: bool = True
+    LANGSMITH_API_KEY: str
+    LANGSMITH_PROJECT = "A1.2-Personal-Finance-Tracker-Agent"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
