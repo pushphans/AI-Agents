@@ -1,0 +1,91 @@
+[
+  {
+    "id": "ORD123",
+    "customer": "Rahul Sharma",
+    "items": [
+      {"product_id": "P001", "name": "Classic Fit Red Running Shoes", "quantity": 1, "price": 2999}
+    ],
+    "total": 2999,
+    "status": "shipped",
+    "payment_status": "completed",
+    "order_date": "2026-06-25",
+    "eta": "2026-07-10",
+    "tracking": "SPEEDEX-TRK-98765",
+    "address": "42, MG Road, Mumbai - 400001"
+  },
+  {
+    "id": "ORD456",
+    "customer": "Priya Patel",
+    "items": [
+      {"product_id": "P007", "name": "Wireless Bluetooth Headphones", "quantity": 1, "price": 2499},
+      {"product_id": "P009", "name": "USB-C Charging Cable 2m", "quantity": 2, "price": 349}
+    ],
+    "total": 3197,
+    "status": "delivered",
+    "payment_status": "completed",
+    "order_date": "2026-06-20",
+    "eta": "2026-07-02",
+    "tracking": "DELIVERY-ABC-12345",
+    "address": "15, Lajpat Nagar, Delhi - 110024"
+  },
+  {
+    "id": "ORD789",
+    "customer": "Amit Singh",
+    "items": [
+      {"product_id": "P015", "name": "Winter Puffer Jacket - Navy", "quantity": 1, "price": 4999},
+      {"product_id": "P016", "name": "Cotton Joggers - Black", "quantity": 2, "price": 1299}
+    ],
+    "total": 7597,
+    "status": "processing",
+    "payment_status": "pending",
+    "order_date": "2026-07-04",
+    "eta": "2026-07-18",
+    "tracking": "",
+    "address": "7B, Sector 62, Noida - 201301"
+  },
+  {
+    "id": "ORD101",
+    "customer": "Sneha Reddy",
+    "items": [
+      {"product_id": "P022", "name": "Dumbbell Set 10kg Pair", "quantity": 1, "price": 2999},
+      {"product_id": "P021", "name": "Yoga Mat Premium 6mm", "quantity": 1, "price": 1499}
+    ],
+    "total": 4498,
+    "status": "cancelled",
+    "payment_status": "refunded",
+    "order_date": "2026-06-28",
+    "eta": null,
+    "tracking": "",
+    "address": "88, Jubilee Hills, Hyderabad - 500033"
+  },
+  {
+    "id": "ORD202",
+    "customer": "Vikram Joshi",
+    "items": [
+      {"product_id": "P008", "name": "Smart Watch Pro", "quantity": 1, "price": 5999}
+    ],
+    "total": 5999,
+    "status": "shipped",
+    "payment_status": "failed",
+    "order_date": "2026-07-01",
+    "eta": "2026-07-15",
+    "tracking": "SPEEDEX-TRK-54321",
+    "address": "12, Indiranagar, Bangalore - 560038"
+  },
+  {
+    "id": "ORD303",
+    "customer": "Neha Kapoor",
+    "items": [
+      {"product_id": "P012", "name": "Denim Jacket - Blue", "quantity": 1, "price": 2499},
+      {"product_id": "P014", "name": "Black Slim Fit Jeans", "quantity": 1, "price": 1799},
+      {"product_id": "P013", "name": "Striped Cotton T-Shirt - Red", "quantity": 2, "price": 699}
+    ],
+    "total": 5696,
+    "status": "delivered",
+    "payment_status": "completed",
+    "order_date": "2026-06-15",
+    "eta": "2026-06-28",
+    "tracking": "DELIVERY-XYZ-67890",
+    "address": "3, Connaught Place, Delhi - 110001"
+  }
+]

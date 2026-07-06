@@ -1,0 +1,56 @@
+[
+  {
+    "code": "SUMMER20",
+    "description": "20% off on summer collection",
+    "discount_percent": 20,
+    "category": "clothing",
+    "min_cart_value": 999,
+    "valid_until": "2026-08-31",
+    "active": true
+  },
+  {
+    "code": "FREESHIP",
+    "description": "Free shipping on all orders above Rs.500",
+    "discount_percent": 0,
+    "category": null,
+    "min_cart_value": 500,
+    "valid_until": "2026-12-31",
+    "active": true
+  },
+  {
+    "code": "WELCOME10",
+    "description": "10% off for first time customers",
+    "discount_percent": 10,
+    "category": null,
+    "min_cart_value": 0,
+    "valid_until": "2026-12-31",
+    "active": true
+  },
+  {
+    "code": "FITNESS25",
+    "description": "Flat 25% off on all sports and fitness equipment",
+    "discount_percent": 25,
+    "category": "sports",
+    "min_cart_value": 1499,
+    "valid_until": "2026-08-15",
+    "active": true
+  },
+  {
+    "code": "PAIRTWO",
+    "description": "Buy 2 footwear items, get 15% off on the cheaper one",
+    "discount_percent": 15,
+    "category": "footwear",
+    "min_cart_value": 0,
+    "valid_until": "2026-09-30",
+    "active": true
+  },
+  {
+    "code": "MONSOON50",
+    "description": "Rs.50 off on orders above Rs.1000",
+    "discount_percent": 0,
+    "category": null,
+    "min_cart_value": 1000,
+    "valid_until": "2026-07-31",
+    "active": true
+  }
+]

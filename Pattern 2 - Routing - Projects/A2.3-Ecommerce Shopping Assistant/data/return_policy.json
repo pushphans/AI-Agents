@@ -1,0 +1,43 @@
+{
+  "general": {
+    "return_window_days": 15,
+    "condition": "Product unused, with original tags and packaging",
+    "process": "Initiate return via 'My Orders' section → Select item → Choose 'Return' → Courier pickup in 3-5 business days",
+    "refund_timeline": "Refund processed within 5-7 business days after pickup. Amount credited to original payment method.",
+    "exceptions": [
+      "Underwear, socks, and personal care items cannot be returned",
+      "Electronics must be returned within 10 days only",
+      "Products with tampered serial numbers are not eligible"
+    ]
+  },
+  "categories": {
+    "footwear": {
+      "return_window_days": 15,
+      "notes": "Shoes must be tried on carpet. Worn outside shoes not accepted."
+    },
+    "clothing": {
+      "return_window_days": 15,
+      "notes": "All tags must be attached. Washed or altered clothes not accepted."
+    },
+    "electronics": {
+      "return_window_days": 10,
+      "notes": "Must include all accessories and original box. Defective items tested before approval."
+    },
+    "accessories": {
+      "return_window_days": 15,
+      "notes": "Wallets, bags, and sunglasses must be unused with tags."
+    },
+    "sports": {
+      "return_window_days": 15,
+      "notes": "Used fitness equipment not eligible. Unopened items only."
+    },
+    "groceries": {
+      "return_window_days": 3,
+      "notes": "Perishable items cannot be returned. Damaged items reported within 24hrs."
+    },
+    "health": {
+      "return_window_days": 0,
+      "notes": "Personal care and health items cannot be returned due to hygiene reasons."
+    }
+  }
+}
