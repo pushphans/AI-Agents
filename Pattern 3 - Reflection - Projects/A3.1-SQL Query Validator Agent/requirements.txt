@@ -1,0 +1,14 @@
+langchain
+langchain-deepseek
+langchain-core
+langchain-community
+langchain-text-splitters
+langchain-chroma
+langchain-huggingface
+sentence-transformers
+pypdf
+fastapi
+uvicorn
+pydantic-settings
+langsmith
+langgraph

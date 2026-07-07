@@ -1,0 +1,22 @@
+Kya karega:
+├── User: "Show me users who signed up last month"
+├── Generator: Makes SQL query
+├── Critic checks:
+│   ├── Syntax correct?
+│   ├── Tables/columns exist?
+│   ├── JOIN logic sahi hai?
+│   ├── WHERE clause safe hai?
+│   ├── LIMIT lagaya?
+│   ├── Injection risk?
+│   └── Performance: index use ho raha hai?
+├── Agar issue → Generator fix kare
+├── Max 3 iterations
+└── Final validated query execute ho
+
+TERA DIRECT USE CASE HAI YE! ⭐
+
+Seekhega kya:
+├── Self-critique loop
+├── Quality validation
+├── Iteration control (max attempts)
+└── Production SQL safety
